@@ -1,0 +1,9 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img">
+  <rect width="640" height="400" fill="#3f6212"/>
+  <circle cx="320" cy="210" r="95" fill="#ef4444"/>
+  <ellipse cx="290" cy="180" rx="22" ry="16" fill="#1c1917"/><ellipse cx="350" cy="230" rx="28" ry="18" fill="#292524"/>
+  <ellipse cx="330" cy="170" rx="18" ry="12" fill="#365314" opacity=".9"/>
+  <path d="M320 115 C340 90 370 100 375 120" fill="none" stroke="#166534" stroke-width="8"/>
+  <text x="32" y="48" fill="#f7fee7" font-family="Segoe UI,Arial" font-size="22" font-weight="700">Karaleke</text>
+  <text x="32" y="76" fill="#bef264" font-family="Segoe UI,Arial" font-size="14">Elma</text>
+</svg>

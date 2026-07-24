@@ -1,0 +1,8 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img">
+  <rect width="640" height="400" fill="#7f1d1d"/>
+  <path d="M280 100 C240 160 230 260 300 320 C370 260 380 160 340 100 C320 90 300 90 280 100Z" fill="#dc2626"/>
+  <ellipse cx="310" cy="300" rx="40" ry="28" fill="#44403c"/>
+  <ellipse cx="310" cy="295" rx="22" ry="14" fill="#1c1917"/>
+  <text x="32" y="48" fill="#fef2f2" font-family="Segoe UI,Arial" font-size="22" font-weight="700">Çiçek Burnu</text>
+  <text x="32" y="76" fill="#fecaca" font-family="Segoe UI,Arial" font-size="14">Biber · Ca eksikliği</text>
+</svg>

@@ -1,0 +1,9 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img">
+  <rect width="640" height="400" fill="#1e293b"/>
+  <ellipse cx="320" cy="220" rx="140" ry="85" fill="#15803d"/>
+  <circle cx="270" cy="200" r="12" fill="#f8fafc" opacity=".85"/><circle cx="300" cy="185" r="10" fill="#f1f5f9" opacity=".8"/>
+  <circle cx="340" cy="195" r="14" fill="#fff" opacity=".75"/><circle cx="360" cy="230" r="11" fill="#f8fafc" opacity=".7"/>
+  <circle cx="290" cy="240" r="9" fill="#e2e8f0" opacity=".8"/>
+  <text x="32" y="48" fill="#f8fafc" font-family="Segoe UI,Arial" font-size="22" font-weight="700">Külleme</text>
+  <text x="32" y="76" fill="#cbd5e1" font-family="Segoe UI,Arial" font-size="14">Asma · Erysiphe</text>
+</svg>
