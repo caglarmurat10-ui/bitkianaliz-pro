@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#422006"/>
+      <stop offset="100%" stop-color="#14532d"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <ellipse cx="420" cy="210" rx="170" ry="100" fill="#4ade80"/><rect x="360" y="170" width="8" height="60" rx="3" fill="#fef08a" transform="rotate(-20 364 200)"/><rect x="400" y="160" width="8" height="70" rx="3" fill="#fde047" transform="rotate(10 404 195)"/><rect x="450" y="175" width="8" height="55" rx="3" fill="#facc15" transform="rotate(-5 454 202)"/><ellipse cx="500" cy="200" rx="40" ry="18" fill="#a3e635" opacity="0.5"/>
+  <rect x="0" y="360" width="800" height="140" fill="#020617" opacity="0.55"/>
+  <text x="36" y="410" fill="#ecfdf5" font-family="Segoe UI, Arial" font-size="34" font-weight="700">Trips</text>
+  <text x="36" y="450" fill="#a7f3d0" font-family="Segoe UI, Arial" font-size="18">Zararli - Thrips</text>
+</svg>

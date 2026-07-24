@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { isDemoMode } from "@/lib/config";
 import {
+  ensureGuestSession,
   getActiveFarmId,
   getFarms,
   setActiveFarmId as demoSetActiveFarm,
@@ -28,6 +29,7 @@ export function FarmProvider({ children }: { children: React.ReactNode }) {
 
   const refresh = useCallback(async () => {
     if (isDemoMode()) {
+      ensureGuestSession();
       const list = getFarms();
       setFarms(list);
       const saved = getActiveFarmId() || list[0]?.id || null;

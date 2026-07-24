@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7f1d1d"/>
+      <stop offset="100%" stop-color="#365314"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <ellipse cx="420" cy="210" rx="170" ry="100" fill="#84cc16"/><circle cx="370" cy="190" r="10" fill="#b91c1c"/><circle cx="400" cy="175" r="8" fill="#dc2626"/><circle cx="430" cy="200" r="11" fill="#991b1b"/><circle cx="460" cy="180" r="7" fill="#ef4444"/><path d="M340 160 C400 140 460 170 520 150" fill="none" stroke="#f8fafc" stroke-width="2" opacity="0.5"/>
+  <rect x="0" y="360" width="800" height="140" fill="#020617" opacity="0.55"/>
+  <text x="36" y="410" fill="#ecfdf5" font-family="Segoe UI, Arial" font-size="34" font-weight="700">Kirmizi Orumcek</text>
+  <text x="36" y="450" fill="#a7f3d0" font-family="Segoe UI, Arial" font-size="18">Zararli - Tetranychus</text>
+</svg>

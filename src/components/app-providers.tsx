@@ -1,8 +1,18 @@
 "use client";
 
+import { useEffect } from "react";
 import { FarmProvider, useFarm } from "@/components/farm-provider";
 import { AppShell } from "@/components/app-shell";
 import { ServiceWorkerRegister } from "@/components/sw-register";
+import { isDemoMode } from "@/lib/config";
+import { ensureGuestSession } from "@/lib/demo-store";
+
+function DemoBoot({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    if (isDemoMode()) ensureGuestSession();
+  }, []);
+  return <>{children}</>;
+}
 
 function ShellInner({ children, title }: { children: React.ReactNode; title?: string }) {
   const { activeFarm, farms, setActiveFarmId } = useFarm();
@@ -15,7 +25,7 @@ function ShellInner({ children, title }: { children: React.ReactNode; title?: st
           <select
             value={activeFarm?.id || ""}
             onChange={(e) => setActiveFarmId(e.target.value)}
-            className="mt-1 w-full md:w-80 rounded-xl bg-slate-900 border border-white/10 px-4 py-2.5 text-white"
+            className="mt-1 w-full rounded-xl border border-white/10 bg-slate-900 px-4 py-2.5 text-white md:w-80"
           >
             {farms.map((f) => (
               <option key={f.id} value={f.id}>
@@ -38,9 +48,11 @@ export function AppProviders({
   title?: string;
 }) {
   return (
-    <FarmProvider>
-      <ServiceWorkerRegister />
-      <ShellInner title={title}>{children}</ShellInner>
-    </FarmProvider>
+    <DemoBoot>
+      <FarmProvider>
+        <ServiceWorkerRegister />
+        <ShellInner title={title}>{children}</ShellInner>
+      </FarmProvider>
+    </DemoBoot>
   );
 }

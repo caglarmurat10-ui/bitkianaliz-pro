@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#134e4a"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <ellipse cx="420" cy="210" rx="180" ry="105" fill="#34d399"/><path d="M280 180 C340 150 380 240 440 180 S560 230 600 190" fill="none" stroke="#f8fafc" stroke-width="6" opacity="0.9"/><path d="M300 240 C360 270 400 200 460 250" fill="none" stroke="#e2e8f0" stroke-width="4" opacity="0.7"/>
+  <rect x="0" y="360" width="800" height="140" fill="#020617" opacity="0.55"/>
+  <text x="36" y="410" fill="#ecfdf5" font-family="Segoe UI, Arial" font-size="34" font-weight="700">Galeriguvesi</text>
+  <text x="36" y="450" fill="#a7f3d0" font-family="Segoe UI, Arial" font-size="18">Turuncgil</text>
+</svg>

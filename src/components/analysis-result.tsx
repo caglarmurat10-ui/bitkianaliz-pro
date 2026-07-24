@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { AnalysisResult } from "@/lib/ai";
 import { findDiseaseById } from "@/data/diseases";
 import { CheckCircle2, AlertTriangle, Sprout, FlaskConical, Clock, BookOpen } from "lucide-react";
@@ -26,7 +25,8 @@ export function AnalysisResultCard({ result }: AnalysisResultCardProps) {
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/80 shadow-xl">
         {disease?.image && (
           <div className="relative aspect-[16/9] w-full border-b border-white/5">
-            <Image src={disease.image} alt={disease.name} fill className="object-cover" unoptimized />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={disease.image} alt={disease.name} className="h-full w-full object-cover" />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 to-transparent p-4 pt-12">
               <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">Katalog eşleşmesi</p>
               <p className="text-sm font-bold text-white">{disease.name}</p>

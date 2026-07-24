@@ -58,6 +58,15 @@ export function setDemoSession(session: DemoSession | null) {
   document.cookie = `bitki_demo_session=${encodeURIComponent(session.userId)}; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
 }
 
+export function ensureGuestSession(): DemoSession {
+  const existing = getDemoSession();
+  if (existing) {
+    setDemoSession(existing);
+    return existing;
+  }
+  return demoLogin("misafir@demo.local", "Misafir Üretici", "producer");
+}
+
 export function demoLogin(email: string, fullName: string, role: UserRole): DemoSession {
   const userId = createId();
   const session: DemoSession = { userId, email, fullName, role };

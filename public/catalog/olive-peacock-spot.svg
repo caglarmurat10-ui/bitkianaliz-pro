@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#365314"/>
+      <stop offset="100%" stop-color="#1a2e05"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <ellipse cx="410" cy="210" rx="160" ry="85" fill="#84cc16"/><circle cx="360" cy="195" r="30" fill="none" stroke="#422006" stroke-width="8"/><circle cx="360" cy="195" r="10" fill="#78350f"/><circle cx="450" cy="220" r="24" fill="none" stroke="#451a03" stroke-width="6"/><circle cx="450" cy="220" r="8" fill="#713f12"/>
+  <rect x="0" y="360" width="800" height="140" fill="#020617" opacity="0.55"/>
+  <text x="36" y="410" fill="#ecfdf5" font-family="Segoe UI, Arial" font-size="34" font-weight="700">Halkali Leke</text>
+  <text x="36" y="450" fill="#a7f3d0" font-family="Segoe UI, Arial" font-size="18">Zeytin</text>
+</svg>

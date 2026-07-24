@@ -30,7 +30,7 @@ const NAV = [
   { href: "/sera", label: "Sera", icon: CloudSun },
   { href: "/calendar", label: "Takvim", icon: CalendarDays },
   { href: "/inventory", label: "Stok", icon: Package },
-  { href: "/diseases", label: "Hastalıklar", icon: Bug },
+  { href: "/diseases", label: "Katalog", icon: Bug },
   { href: "/rehber", label: "Rehber", icon: BookOpen },
   { href: "/notifications", label: "Bildirimler", icon: Bell },
 ];

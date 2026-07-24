@@ -2,36 +2,33 @@ import { NextResponse, type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 import { isDemoMode } from "@/lib/config";
 
-const PUBLIC = ["/login", "/register", "/", "/sw.js", "/manifest.json", "/api/health", "/api/auth"];
-
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
   if (isDemoMode()) {
-    const isPublic =
-      PUBLIC.some((p) => pathname === p || pathname.startsWith(p + "/")) ||
-      pathname.startsWith("/api/auth");
-    const demoSession = request.cookies.get("bitki_demo_session")?.value;
-    const needsAuth =
-      pathname.startsWith("/dashboard") ||
-      pathname.startsWith("/calendar") ||
-      pathname.startsWith("/inventory") ||
-      pathname.startsWith("/diseases") ||
-      pathname.startsWith("/analyze") ||
-      pathname.startsWith("/gubreleme") ||
-      pathname.startsWith("/ilaclama") ||
-      pathname.startsWith("/sera") ||
-      pathname.startsWith("/rehber") ||
-      pathname.startsWith("/notifications") ||
-      pathname.startsWith("/api/analyze");
-
-    if (needsAuth && !demoSession && !isPublic) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      url.searchParams.set("next", pathname);
-      return NextResponse.redirect(url);
+    // Demo: giriş formu yok — otomatik misafir çerezi
+    const res = NextResponse.next();
+    if (!request.cookies.get("bitki_demo_session")?.value) {
+      res.cookies.set("bitki_demo_session", "demo-guest", {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30,
+        sameSite: "lax",
+      });
     }
-    return NextResponse.next();
+    // /login ve /register -> panele
+    const { pathname } = request.nextUrl;
+    if (pathname === "/login" || pathname === "/register") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      const redirect = NextResponse.redirect(url);
+      if (!request.cookies.get("bitki_demo_session")?.value) {
+        redirect.cookies.set("bitki_demo_session", "demo-guest", {
+          path: "/",
+          maxAge: 60 * 60 * 24 * 30,
+          sameSite: "lax",
+        });
+      }
+      return redirect;
+    }
+    return res;
   }
 
   return updateSession(request);

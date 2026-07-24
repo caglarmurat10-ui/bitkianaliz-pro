@@ -116,12 +116,16 @@ export interface Disease {
   id: string;
   plant: string;
   name: string;
+  /** hastalık veya zararlı */
+  kind: "disease" | "pest";
   pathogen?: string;
   symptoms: string[];
   cultural_measures: string[];
+  /** Biyolojik / doğal mücadele */
+  biological_measures: string[];
   chemical_measures: string[];
   severity_hint: SeverityLevel;
-  /** Katalog görseli (yerel /public veya uzak URL) */
+  /** Katalog görseli (yerel /public) */
   image: string;
 }
 
