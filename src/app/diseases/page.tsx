@@ -3,9 +3,22 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { AppProviders } from "@/components/app-providers";
-import { DISEASES, plantsInCatalog } from "@/data/diseases";
+import { DISEASES } from "@/data/diseases";
 import type { Disease } from "@/lib/types";
-import { Bug, Leaf, Search, Shield, Sprout, X, AlertTriangle, FlaskConical } from "lucide-react";
+import type { EnrichedCatalogItem } from "@/lib/wiki-catalog";
+import {
+  Bug,
+  Leaf,
+  Search,
+  Shield,
+  Sprout,
+  X,
+  AlertTriangle,
+  FlaskConical,
+  ExternalLink,
+  RefreshCw,
+  Globe,
+} from "lucide-react";
 
 const SEV: Record<string, string> = {
   low: "Düşük",
@@ -24,9 +37,20 @@ const SEV_TONE: Record<string, string> = {
 type Tab = "all" | "disease" | "pest";
 
 function CatalogImage({ src, alt }: { src: string; alt: string }) {
+  const [err, setErr] = useState(false);
+  if (err || !src) {
+    return <div className="flex h-full w-full items-center justify-center bg-slate-900 text-xs text-slate-500">Görsel yok</div>;
+  }
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} className="h-full w-full object-cover" loading="lazy" />
+    <img
+      src={src}
+      alt={alt}
+      className="h-full w-full object-cover"
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      onError={() => setErr(true)}
+    />
   );
 }
 
@@ -35,7 +59,7 @@ function DiseaseCard({
   focused,
   onOpen,
 }: {
-  d: Disease;
+  d: EnrichedCatalogItem;
   focused: boolean;
   onOpen: () => void;
 }) {
@@ -60,6 +84,9 @@ function DiseaseCard({
           >
             {d.kind === "pest" ? "Zararlı" : "Hastalık"}
           </span>
+          {d.online && (
+            <span className="rounded-full bg-sky-600/80 px-2 py-0.5 text-[10px] font-bold text-white">Online</span>
+          )}
         </div>
         <span className={`absolute right-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold ${SEV_TONE[d.severity_hint]}`}>
           {SEV[d.severity_hint]}
@@ -80,7 +107,7 @@ function DiseaseCard({
             </p>
           </div>
         </div>
-        <p className="line-clamp-2 text-xs text-slate-300">{d.symptoms[0]}</p>
+        <p className="line-clamp-2 text-xs text-slate-300">{d.wikiExtract || d.symptoms[0]}</p>
       </div>
     </button>
   );
@@ -116,7 +143,7 @@ function MeasureList({
   );
 }
 
-function DiseaseDetail({ d, onClose }: { d: Disease; onClose: () => void }) {
+function DiseaseDetail({ d, onClose }: { d: EnrichedCatalogItem; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-0 sm:items-center sm:p-4" onClick={onClose}>
       <div
@@ -125,12 +152,7 @@ function DiseaseDetail({ d, onClose }: { d: Disease; onClose: () => void }) {
       >
         <div className="relative aspect-[16/10] w-full">
           <CatalogImage src={d.image} alt={d.name} />
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute right-3 top-3 rounded-full bg-black/60 p-2 text-white"
-            aria-label="Kapat"
-          >
+          <button type="button" onClick={onClose} className="absolute right-3 top-3 rounded-full bg-black/60 p-2 text-white" aria-label="Kapat">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -152,8 +174,28 @@ function DiseaseDetail({ d, onClose }: { d: Disease; onClose: () => void }) {
             <p className="text-sm text-slate-400">
               {d.plant}
               {d.pathogen ? ` · ${d.pathogen}` : ""}
+              {d.wikiDescription ? ` · ${d.wikiDescription}` : ""}
             </p>
           </div>
+
+          {d.wikiExtract && (
+            <section className="rounded-2xl border border-sky-500/20 bg-sky-500/5 p-4">
+              <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-sky-300">
+                <Globe className="h-3.5 w-3.5" /> Wikipedia özeti
+              </p>
+              <p className="text-sm leading-relaxed text-slate-200">{d.wikiExtract}</p>
+              {d.wikiUrl && (
+                <a
+                  href={d.wikiUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-sky-300 hover:underline"
+                >
+                  Kaynağı aç <ExternalLink className="h-3 w-3" />
+                </a>
+              )}
+            </section>
+          )}
 
           <section>
             <h3 className="mb-2 text-xs font-bold uppercase tracking-wide text-slate-500">Belirtiler</h3>
@@ -167,7 +209,7 @@ function DiseaseDetail({ d, onClose }: { d: Disease; onClose: () => void }) {
             </ul>
           </section>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-4 space-y-4">
+          <div className="space-y-4 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
             <p className="text-sm font-semibold text-white">Nasıl mücadele edilir?</p>
             <MeasureList title="Kültürel" items={d.cultural_measures} icon={Sprout} tone="text-emerald-400" />
             <MeasureList title="Biyolojik / doğal" items={d.biological_measures} icon={Shield} tone="text-sky-400" />
@@ -179,27 +221,56 @@ function DiseaseDetail({ d, onClose }: { d: Disease; onClose: () => void }) {
   );
 }
 
+function toEnriched(d: Disease): EnrichedCatalogItem {
+  return { ...d, online: false, imageSource: "local", biological_measures: d.biological_measures || [] };
+}
+
 function DiseasesContent() {
   const params = useSearchParams();
   const focusId = params.get("id");
   const [q, setQ] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [plant, setPlant] = useState("Tümü");
   const [tab, setTab] = useState<Tab>("all");
   const [openId, setOpenId] = useState<string | null>(focusId);
+  const [items, setItems] = useState<EnrichedCatalogItem[]>(() => DISEASES.map(toEnriched));
+  const [loading, setLoading] = useState(true);
+  const [meta, setMeta] = useState({ onlineCount: 0, count: DISEASES.length });
+  const [error, setError] = useState<string | null>(null);
+
+  const load = async (query = "") => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/catalog${query ? `?q=${encodeURIComponent(query)}` : ""}`);
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Yüklenemedi");
+      setItems(data.items);
+      setMeta({ onlineCount: data.onlineCount, count: data.count });
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Online katalog alınamadı");
+      setItems(DISEASES.map(toEnriched));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    void load();
+  }, []);
 
   useEffect(() => {
     if (focusId) {
       setOpenId(focusId);
-      const el = document.getElementById(focusId);
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById(focusId)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }
-  }, [focusId]);
+  }, [focusId, items]);
 
-  const plants = useMemo(() => ["Tümü", ...plantsInCatalog()], []);
+  const plants = useMemo(() => ["Tümü", ...new Set(items.map((d) => d.plant))], [items]);
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
-    return DISEASES.filter((d) => {
+    return items.filter((d) => {
       if (tab !== "all" && d.kind !== tab) return false;
       if (plant !== "Tümü" && d.plant !== plant) return false;
       if (!query) return true;
@@ -207,15 +278,31 @@ function DiseasesContent() {
         d.name.toLowerCase().includes(query) ||
         d.plant.toLowerCase().includes(query) ||
         (d.pathogen || "").toLowerCase().includes(query) ||
+        (d.wikiExtract || "").toLowerCase().includes(query) ||
         d.symptoms.some((s) => s.toLowerCase().includes(query))
       );
     });
-  }, [q, plant, tab]);
+  }, [q, plant, tab, items]);
 
-  const open = DISEASES.find((d) => d.id === openId) || null;
+  const open = items.find((d) => d.id === openId) || null;
 
   return (
     <div className="space-y-4 pb-20 md:pb-0">
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-sky-500/20 bg-sky-500/5 px-4 py-3 text-sm text-sky-100">
+        <p className="flex items-center gap-2">
+          <Globe className="h-4 w-4" />
+          Görseller ve özetler Wikipedia + Openverse üzerinden online çekilir.
+          {meta.onlineCount > 0 ? ` (${meta.onlineCount}/${meta.count} online)` : ""}
+        </p>
+        <button
+          type="button"
+          onClick={() => load(searchInput)}
+          className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-xs font-semibold hover:bg-white/5"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} /> Yenile
+        </button>
+      </div>
+
       <div className="sticky top-0 z-20 -mx-4 space-y-3 border-b border-white/5 bg-slate-950/95 px-4 py-3 backdrop-blur md:static md:mx-0 md:border-0 md:bg-transparent md:px-0 md:py-0">
         <div className="grid grid-cols-3 gap-1 rounded-xl bg-white/5 p-1">
           {(
@@ -229,23 +316,35 @@ function DiseasesContent() {
               key={t.id}
               type="button"
               onClick={() => setTab(t.id)}
-              className={`rounded-lg py-2 text-xs font-bold ${
-                tab === t.id ? "bg-emerald-600 text-white" : "text-slate-400"
-              }`}
+              className={`rounded-lg py-2 text-xs font-bold ${tab === t.id ? "bg-emerald-600 text-white" : "text-slate-400"}`}
             >
               {t.label}
             </button>
           ))}
         </div>
-        <div className="relative">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Hastalık, zararlı veya belirti ara..."
-            className="w-full rounded-xl border border-white/10 bg-slate-900 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500"
-          />
-        </div>
+
+        <form
+          className="flex gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setQ(searchInput);
+            void load(searchInput);
+          }}
+        >
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+            <input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Online ara: mildiyö, beyazsine, zeytin sineği..."
+              className="w-full rounded-xl border border-white/10 bg-slate-900 py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-slate-500"
+            />
+          </div>
+          <button type="submit" className="rounded-xl bg-emerald-600 px-4 text-sm font-semibold text-white">
+            Ara
+          </button>
+        </form>
+
         <div className="flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {plants.map((p) => (
             <button
@@ -261,7 +360,8 @@ function DiseasesContent() {
           ))}
         </div>
         <p className="text-xs text-slate-500">
-          {filtered.length} kayıt · {filtered.filter((x) => x.kind === "pest").length} zararlı
+          {loading ? "Online kütüphane yükleniyor…" : `${filtered.length} kayıt`}
+          {error ? ` · ${error}` : ""}
         </p>
       </div>
 
@@ -271,10 +371,8 @@ function DiseasesContent() {
         ))}
       </div>
 
-      {filtered.length === 0 && (
-        <p className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center text-sm text-slate-400">
-          Eşleşen kayıt yok.
-        </p>
+      {!loading && filtered.length === 0 && (
+        <p className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center text-sm text-slate-400">Eşleşen kayıt yok.</p>
       )}
 
       {open && <DiseaseDetail d={open} onClose={() => setOpenId(null)} />}
