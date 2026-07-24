@@ -8,7 +8,15 @@ export const maxDuration = 60;
 export async function GET(req: NextRequest) {
   try {
     const q = req.nextUrl.searchParams.get("q")?.trim() || "";
+    const id = req.nextUrl.searchParams.get("id")?.trim() || "";
     const data = q ? await searchOnlineCatalog(q) : await getEnrichedCatalog();
+    if (id) {
+      const item = data.find((d) => d.id === id);
+      if (!item) {
+        return NextResponse.json({ ok: false, error: "Kayıt bulunamadı" }, { status: 404 });
+      }
+      return NextResponse.json({ ok: true, item });
+    }
     return NextResponse.json({
       ok: true,
       source: "wikipedia+openverse",

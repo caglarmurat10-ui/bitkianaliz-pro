@@ -14,7 +14,7 @@ import {
   getNotifications,
   subscribeStore,
 } from "@/lib/demo-store";
-import { AlertTriangle, Package, Camera, Sprout, Bug } from "lucide-react";
+import { AlertTriangle, Package, Camera, Sprout, Bug, BookOpen, CloudSun, FlaskConical } from "lucide-react";
 import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from "date-fns";
 import { tr } from "date-fns/locale";
 import type { WeatherData } from "@/lib/weather";
@@ -164,9 +164,41 @@ function DashboardContent() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <p className="text-sm text-slate-400">
+            Bu hafta {stats.weekApps} uygulama · {activeFarm.name}
+          </p>
+          {weather && (
+            <p className="mt-1 text-xs text-slate-500">
+              Hava: {weather.temp}°C, nem %{weather.humidity}
+              {weather.isSuitableForSpraying === false
+                ? ` · İlaçlama: ${weather.sprayingWarning || "uygun değil"}`
+                : " · İlaçlama uygun görünüyor"}
+            </p>
+          )}
+        </div>
         <PushOptIn />
       </div>
+
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {[
+          { href: "/analyze", label: "Teşhis çek", icon: Camera, tone: "bg-emerald-600 text-white" },
+          { href: "/diseases", label: "Katalog", icon: BookOpen, tone: "bg-sky-600/90 text-white" },
+          { href: "/sera", label: "Sera / Sensör", icon: CloudSun, tone: "bg-teal-700 text-white" },
+          { href: "/ilaclama", label: "İlaçlama", icon: FlaskConical, tone: "bg-amber-700 text-white" },
+        ].map((a) => (
+          <Link
+            key={a.href}
+            href={a.href}
+            className={`flex flex-col items-center gap-2 rounded-2xl px-3 py-4 text-center text-xs font-bold ${a.tone}`}
+          >
+            <a.icon className="h-5 w-5" />
+            {a.label}
+          </Link>
+        ))}
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((c) => (
           <Link key={c.label} href={c.href} className="rounded-2xl border border-white/10 bg-slate-900/60 p-5 hover:border-emerald-500/30">
@@ -209,7 +241,7 @@ function DashboardContent() {
             </Link>
           </div>
           {stats.recentAnalyses.length === 0 ? (
-            <p className="text-sm text-slate-500">Henüz analiz yok.</p>
+            <p className="text-sm text-slate-500">Henüz analiz yok. Kameradan teşhis başlatın.</p>
           ) : (
             <ul className="space-y-3">
               {stats.recentAnalyses.map((a) => (

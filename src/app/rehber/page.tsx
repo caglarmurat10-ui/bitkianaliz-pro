@@ -16,6 +16,13 @@ function GuideContent() {
 
   return (
     <>
+      <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-sm text-emerald-100">
+        Hastalık / zararlı fotoğraflı katalog için{" "}
+        <a href="/diseases" className="font-semibold underline">
+          Katalog
+        </a>{" "}
+        sayfasını kullanın. Aşağıda gübre ve ilaç etken maddeleri yer alır.
+      </div>
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2 className="mb-2 flex items-center gap-3 text-2xl font-bold text-white">

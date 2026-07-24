@@ -366,14 +366,34 @@ function DiseasesContent() {
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {filtered.map((d) => (
-          <DiseaseCard key={d.id} d={d} focused={focusId === d.id} onOpen={() => setOpenId(d.id)} />
-        ))}
+        {!loading &&
+          filtered.map((d) => (
+            <DiseaseCard key={d.id} d={d} focused={focusId === d.id} onOpen={() => setOpenId(d.id)} />
+          ))}
       </div>
 
       {!loading && filtered.length === 0 && (
         <p className="rounded-2xl border border-white/10 bg-slate-900/50 p-6 text-center text-sm text-slate-400">Eşleşen kayıt yok.</p>
       )}
+
+      {loading && (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="overflow-hidden rounded-2xl border border-white/10 bg-slate-900/40">
+              <div className="aspect-[16/10] animate-pulse bg-slate-800" />
+              <div className="space-y-2 p-4">
+                <div className="h-4 w-2/3 animate-pulse rounded bg-slate-800" />
+                <div className="h-3 w-1/2 animate-pulse rounded bg-slate-800" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <p className="pb-2 text-center text-[11px] leading-relaxed text-slate-500">
+        Görseller ve özetler Wikipedia / Wikimedia Commons ve Openverse (CC lisanslı) kaynaklarından alınır.
+        Kimyasal öneriler bilgilendirme amaçlıdır; etiket ve yerel mevzuata uyun.
+      </p>
 
       {open && <DiseaseDetail d={open} onClose={() => setOpenId(null)} />}
     </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AnalysisResult } from "@/lib/ai";
 import { findDiseaseById } from "@/data/diseases";
@@ -19,17 +22,42 @@ export function AnalysisResultCard({ result }: AnalysisResultCardProps) {
   const alternatives = result.alternatives || [];
   const spray = result.sprayTiming || result.sprayTimingNote;
   const disease = findDiseaseById(result.diseaseId);
+  const [onlineImage, setOnlineImage] = useState<string | null>(null);
+  const [onlineName, setOnlineName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!result.diseaseId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/catalog?id=${encodeURIComponent(result.diseaseId!)}`);
+        const data = await res.json();
+        if (!cancelled && data.ok && data.item?.image) {
+          setOnlineImage(data.item.image);
+          setOnlineName(data.item.name || null);
+        }
+      } catch {
+        /* local fallback */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [result.diseaseId]);
+
+  const image = onlineImage || disease?.image;
+  const label = onlineName || disease?.name;
 
   return (
     <div className="mx-auto mt-6 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/80 shadow-xl">
-        {disease?.image && (
+        {image && (
           <div className="relative aspect-[16/9] w-full border-b border-white/5">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={disease.image} alt={disease.name} className="h-full w-full object-cover" />
+            <img src={image} alt={label || result.diagnosis} className="h-full w-full object-cover" referrerPolicy="no-referrer" />
             <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950 to-transparent p-4 pt-12">
               <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">Katalog eşleşmesi</p>
-              <p className="text-sm font-bold text-white">{disease.name}</p>
+              <p className="text-sm font-bold text-white">{label}</p>
             </div>
           </div>
         )}
@@ -67,7 +95,7 @@ export function AnalysisResultCard({ result }: AnalysisResultCardProps) {
               className="inline-flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-200"
             >
               <BookOpen className="h-4 w-4" />
-              Hastalık kartını aç (resimli)
+              Katalog kartı + mücadele
             </Link>
           )}
 
@@ -86,10 +114,7 @@ export function AnalysisResultCard({ result }: AnalysisResultCardProps) {
               <h3 className="mb-2 font-semibold text-white">Alternatif Teşhisler</h3>
               <div className="flex flex-wrap gap-2">
                 {alternatives.map((alt, i) => (
-                  <span
-                    key={i}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300"
-                  >
+                  <span key={i} className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300">
                     {alt.name || alt.diagnosis} (%{Math.round(alt.confidence)})
                   </span>
                 ))}
